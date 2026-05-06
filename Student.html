@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Students Gallery | معرض الأعمال 🎨</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@700;900&family=Playfair+Display:wght@700;900&family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  min-height:100vh;
+  background:linear-gradient(160deg,#001228 0%,#002244 60%,#001a33 100%);
+  font-family:'Cairo',sans-serif; color:#fff; padding-bottom:60px;
+}
+.flag-bar { height:7px; background:linear-gradient(90deg,#00732f 25%,#fff 25% 50%,#000 50% 75%,#ff0000 75%); }
+
+header { text-align:center; padding:32px 20px 18px; }
+header::after { content:''; display:block; width:100px; height:2px; background:linear-gradient(90deg,transparent,#d4af37,transparent); margin:14px auto 0; }
+.header-eagle { font-size:44px; display:block; margin-bottom:8px; filter:drop-shadow(0 0 15px rgba(212,175,55,0.5)); }
+.header-title { font-family:'Tajawal',sans-serif; font-size:24px; font-weight:900; color:#fff; text-shadow:0 0 30px rgba(212,175,55,0.3); }
+.header-title span { display:block; font-family:'Playfair Display',serif; font-size:15px; font-weight:700; color:rgba(212,175,55,0.8); margin-top:3px; }
+.header-sub { font-size:12px; color:rgba(180,210,255,0.6); margin-top:5px; }
+.header-teacher { font-size:12px; color:#d4af37; margin-top:3px; font-weight:600; }
+
+/* UPLOAD SECTION */
+.upload-wrap { max-width:500px; margin:24px auto; padding:0 16px; }
+.upload-box { background:rgba(255,255,255,0.05); border:2px dashed rgba(212,175,55,0.4); border-radius:20px; padding:26px 22px; }
+.upload-box h3 { font-family:'Tajawal',sans-serif; font-size:17px; font-weight:900; color:#d4af37; margin-bottom:3px; text-align:center; }
+.upload-box h3 span { display:block; font-family:'Playfair Display',serif; font-size:12px; font-weight:700; color:rgba(212,175,55,0.55); margin-bottom:16px; }
+
+.field { margin-bottom:12px; }
+.field label { display:block; font-size:11px; color:rgba(180,210,255,0.6); margin-bottom:5px; font-weight:600; letter-spacing:1px; }
+.field label em { font-style:normal; color:rgba(180,210,255,0.35); margin-right:4px; font-size:10px; }
+.field input, .field select {
+  width:100%; background:rgba(255,255,255,0.07); border:1px solid rgba(255,255,255,0.12);
+  border-radius:10px; padding:11px 14px; color:#fff; font-family:'Cairo',sans-serif; font-size:14px; outline:none; transition:border-color 0.2s;
+}
+.field input:focus, .field select:focus { border-color:#d4af37; }
+.field input::placeholder { color:rgba(180,210,255,0.3); }
+.field select option { background:#002244; }
+
+/* DROP ZONE */
+.drop-zone {
+  border:2px dashed rgba(212,175,55,0.35); border-radius:14px; padding:26px 16px;
+  text-align:center; cursor:pointer; position:relative; margin-bottom:14px;
+  transition:all 0.2s; background:rgba(255,255,255,0.02);
+}
+.drop-zone:hover, .drop-zone.active { border-color:#d4af37; background:rgba(212,175,55,0.05); }
+.drop-zone input[type=file] { position:absolute; inset:0; opacity:0; cursor:pointer; width:100%; height:100%; }
+.dz-icon { font-size:34px; display:block; margin-bottom:8px; }
+.dz-text { font-size:13px; color:rgba(180,210,255,0.7); font-weight:600; }
+.dz-sub { font-size:11px; color:rgba(180,210,255,0.35); margin-top:4px; font-style:italic; direction:ltr; }
+.dz-types { display:flex; justify-content:center; gap:8px; margin-top:10px; flex-wrap:wrap; }
+.dz-type { background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.1); border-radius:20px; padding:3px 10px; font-size:10px; color:rgba(180,210,255,0.5); }
+
+/* PREVIEW */
+.preview-area { display:none; margin-bottom:14px; border-radius:12px; overflow:hidden; position:relative; }
+.preview-area img, .preview-area video { width:100%; max-height:200px; object-fit:cover; display:block; border-radius:12px; }
+.preview-file { background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.1); border-radius:12px; padding:14px 16px; display:flex; align-items:center; gap:12px; }
+.pf-icon { font-size:28px; }
+.pf-info { flex:1; }
+.pf-name { font-size:13px; color:#fff; font-weight:600; word-break:break-all; }
+.pf-size { font-size:11px; color:rgba(180,210,255,0.4); margin-top:2px; direction:ltr; }
+.preview-remove { position:absolute; top:8px; left:8px; background:rgba(200,0,0,0.8); border:none; border-radius:50%; width:28px; height:28px; cursor:pointer; color:#fff; font-size:14px; display:flex; align-items:center; justify-content:center; }
+
+/* AUDIO player preview */
+.audio-preview { background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.1); border-radius:12px; padding:14px 16px; }
+.audio-preview audio { width:100%; margin-top:8px; }
+
+.submit-btn {
+  width:100%; background:linear-gradient(135deg,#d4af37,#a07c10); border:none; border-radius:12px;
+  padding:14px; font-family:'Tajawal',sans-serif; font-size:16px; font-weight:900; color:#000; cursor:pointer; transition:all 0.2s;
+}
+.submit-btn:hover { transform:translateY(-2px); box-shadow:0 6px 25px rgba(212,175,55,0.4); }
+.submit-btn:disabled { opacity:0.5; cursor:not-allowed; transform:none; }
+.submit-btn span { font-family:'Playfair Display',serif; font-size:12px; display:block; font-weight:700; opacity:0.7; }
+
+/* GALLERY */
+.gallery-wrap { max-width:960px; margin:10px auto 0; padding:0 16px; }
+.gallery-title { font-family:'Tajawal',sans-serif; font-size:18px; font-weight:900; color:#fff; margin-bottom:18px; display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+.gallery-title em { font-family:'Playfair Display',serif; font-style:italic; font-size:13px; color:rgba(212,175,55,0.6); font-weight:700; }
+.count-badge { background:rgba(212,175,55,0.2); border:1px solid rgba(212,175,55,0.4); border-radius:20px; padding:2px 12px; font-size:12px; color:#d4af37; }
+
+.grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:16px; }
+.card { background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.08); border-radius:16px; overflow:hidden; transition:transform 0.2s; animation:up 0.4s ease both; }
+.card:hover { transform:translateY(-4px); }
+@keyframes up { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
+
+.card-media { width:100%; height:180px; object-fit:cover; display:block; }
+.card-media-audio { width:100%; height:180px; background:linear-gradient(135deg,rgba(0,100,80,0.2),rgba(0,50,120,0.2)); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:8px; }
+.card-media-audio span { font-size:44px; }
+.card-media-audio audio { width:90%; }
+.card-media-placeholder { width:100%; height:180px; background:linear-gradient(135deg,rgba(212,175,55,0.07),rgba(0,50,120,0.1)); display:flex; align-items:center; justify-content:center; font-size:50px; }
+.card-body { padding:12px 14px 14px; }
+.card-name { font-family:'Tajawal',sans-serif; font-size:15px; font-weight:900; color:#fff; margin-bottom:4px; }
+.card-meta { display:flex; gap:6px; flex-wrap:wrap; margin-bottom:6px; }
+.card-class { background:rgba(212,175,55,0.12); border:1px solid rgba(212,175,55,0.25); border-radius:10px; padding:2px 10px; font-size:11px; color:#d4af37; font-weight:600; }
+.card-type { background:rgba(0,150,100,0.12); border:1px solid rgba(0,200,130,0.2); border-radius:10px; padding:2px 10px; font-size:11px; color:rgba(100,220,180,0.8); }
+.card-date { font-size:11px; color:rgba(180,210,255,0.35); }
+.cert-btn { margin-top:8px; width:100%; background:rgba(212,175,55,0.1); border:1px solid rgba(212,175,55,0.3); border-radius:8px; padding:7px; color:#d4af37; font-size:11px; font-weight:700; cursor:pointer; font-family:'Cairo',sans-serif; transition:all 0.2s; }
+.cert-btn:hover { background:rgba(212,175,55,0.2); }
+
+.empty { text-align:center; padding:50px 20px; color:rgba(180,210,255,0.4); font-size:14px; }
+.empty span { font-size:48px; display:block; margin-bottom:12px; opacity:0.4; }
+.empty em { font-family:'Playfair Display',serif; font-style:italic; font-size:13px; display:block; margin-top:4px; color:rgba(180,210,255,0.3); }
+
+.toast { position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(80px); background:#00732f; color:#fff; padding:12px 26px; border-radius:50px; font-size:14px; font-weight:600; z-index:99; transition:transform 0.35s cubic-bezier(0.34,1.56,0.64,1); box-shadow:0 6px 25px rgba(0,0,0,0.3); white-space:nowrap; }
+.toast.show { transform:translateX(-50%) translateY(0); }
+
+/* CERTIFICATE MODAL */
+.cert-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.85); z-index:200; display:none; align-items:center; justify-content:center; padding:20px; }
+.cert-overlay.show { display:flex; }
+.cert-modal { background:#fff; border-radius:16px; overflow:hidden; max-width:680px; width:100%; position:relative; box-shadow:0 20px 60px rgba(0,0,0,0.5); }
+.cert-close { position:absolute; top:12px; left:12px; background:rgba(0,0,0,0.1); border:none; border-radius:50%; width:32px; height:32px; cursor:pointer; font-size:16px; display:flex; align-items:center; justify-content:center; color:#333; z-index:5; }
+.cert-actions { display:flex; gap:10px; justify-content:center; padding:14px 20px; background:#f5f5f0; border-top:1px solid #e0e0d8; }
+.cert-print-btn { background:linear-gradient(135deg,#d4af37,#a07c10); border:none; border-radius:10px; padding:10px 24px; font-family:'Cairo',sans-serif; font-size:14px; font-weight:700; color:#000; cursor:pointer; }
+
+/* CERTIFICATE DESIGN */
+#cert-content {
+  width:100%; padding:0;
+  background: #faf8f2;
+  font-family:'Cairo',sans-serif;
+  position:relative; overflow:hidden;
+}
+.cert-flag-top { height:8px; background:linear-gradient(90deg,#00732f 25%,#fff 25% 50%,#000 50% 75%,#ff0000 75%); }
+.cert-flag-bottom { height:8px; background:linear-gradient(90deg,#00732f 25%,#fff 25% 50%,#000 50% 75%,#ff0000 75%); }
+.cert-gold-top { height:3px; background:linear-gradient(90deg,#b8960f,#f0c840,#d4af37,#f0c840,#b8960f); }
+.cert-gold-bottom { height:3px; background:linear-gradient(90deg,#b8960f,#f0c840,#d4af37,#f0c840,#b8960f); }
+
+.cert-inner { padding:28px 40px 24px; text-align:center; position:relative; }
+.cert-inner::before {
+  content:'';
+  position:absolute; inset:14px;
+  border:1px solid rgba(212,175,55,0.25);
+  border-radius:8px; pointer-events:none;
+}
+
+.cert-eagle { font-size:40px; display:block; margin-bottom:6px; filter:drop-shadow(0 2px 6px rgba(212,175,55,0.3)); }
+.cert-school { font-size:11px; color:#888; letter-spacing:2px; font-weight:600; margin-bottom:2px; }
+.cert-title-ar { font-family:'Tajawal',sans-serif; font-size:28px; font-weight:900; color:#1a1a1a; margin:8px 0 2px; line-height:1.2; }
+.cert-title-en { font-family:'Playfair Display',serif; font-size:14px; color:#aa8800; font-style:italic; font-weight:700; margin-bottom:14px; }
+.cert-divider { width:80px; height:2px; background:linear-gradient(90deg,transparent,#d4af37,transparent); margin:0 auto 14px; }
+.cert-presented { font-size:12px; color:#666; margin-bottom:6px; }
+.cert-name { font-family:'Tajawal',sans-serif; font-size:30px; font-weight:900; color:#1a1a1a; margin:4px 0 2px; }
+.cert-name-en { font-family:'Playfair Display',serif; font-size:14px; color:#555; font-style:italic; }
+.cert-class-row { display:inline-block; background:rgba(0,100,40,0.08); border:1px solid rgba(0,150,60,0.2); border-radius:20px; padding:4px 18px; font-size:13px; color:#005a1e; font-weight:700; margin:10px 0; }
+.cert-body-text { font-size:13px; color:#444; line-height:1.8; max-width:480px; margin:0 auto 12px; }
+.cert-initiative { font-family:'Tajawal',sans-serif; font-size:16px; font-weight:900; color:#C8102E; margin:6px 0 2px; }
+.cert-initiative-en { font-family:'Playfair Display',serif; font-size:12px; color:#888; font-style:italic; }
+.cert-divider2 { width:120px; height:1px; background:linear-gradient(90deg,transparent,#d4af37,transparent); margin:12px auto; }
+.cert-footer { display:flex; justify-content:space-between; align-items:flex-end; margin-top:10px; flex-wrap:wrap; gap:10px; }
+.cert-sig { text-align:center; flex:1; min-width:140px; }
+.cert-sig-line { width:120px; height:1px; background:#ccc; margin:0 auto 5px; }
+.cert-sig-name { font-family:'Tajawal',sans-serif; font-size:12px; font-weight:900; color:#333; }
+.cert-sig-title { font-size:10px; color:#888; font-style:italic; }
+.cert-date-box { text-align:center; flex:1; min-width:100px; }
+.cert-date-label { font-size:10px; color:#aaa; letter-spacing:1px; margin-bottom:3px; }
+.cert-date-val { font-family:'Playfair Display',serif; font-size:13px; color:#555; font-weight:700; }
+.cert-uae { font-size:11px; color:#888; letter-spacing:1px; }
+
+@media(max-width:500px){
+  .header-title { font-size:20px; }
+  .grid { grid-template-columns:1fr 1fr; gap:10px; }
+  .card-media, .card-media-placeholder, .card-media-audio { height:130px; }
+}
+@media print {
+  body { background:#fff; padding:0; }
+  .cert-overlay { position:static; background:none; padding:0; display:block; }
+  .cert-modal { box-shadow:none; border-radius:0; max-width:100%; }
+  .cert-actions, .cert-close { display:none; }
+}
+</style>
+</head>
+<body>
+
+<div class="flag-bar"></div>
+
+<header>
+  <span class="header-eagle">🦅</span>
+  <div class="header-title">
+    معرض أعمالنا الوطنية 🎨
+    <span>Our National Creative Gallery</span>
+  </div>
+  <div class="header-sub">مبادرة خط الدفاع الأول &nbsp;•&nbsp; Frontline Heroes Initiative &nbsp;•&nbsp; روضة البشاير | Al Bashair KG</div>
+  <div class="header-teacher">🌸 المعلمة حليمة محمد & فاطمة محفوظ &nbsp;|&nbsp; Ms. Halima & Ms. Fatima</div>
+</header>
+
+<!-- UPLOAD -->
+<div class="upload-wrap">
+  <div class="upload-box">
+    <h3>
+      ✨ أضف عملك هنا
+      <span>Share Your Creative Work</span>
+    </h3>
+
+    <div class="field">
+      <label>اسمك الكامل <em>/ Full Name</em></label>
+      <input type="text" id="f-name" placeholder="e.g. Sara Mohammed Al Hamadi">
+    </div>
+
+    <div class="field">
+      <label>صفك الدراسي <em>/ Class</em></label>
+      <select id="f-class">
+        <option value="">— اختر / Select —</option>
+        <option>KG1/1</option>
+        <option>KG1/2</option>
+        <option>KG1/3</option>
+        <option>KG1/4</option>
+        <option>KG1/5</option>
+        <option>KG1/6</option>
+      </select>
+    </div>
+
+    <!-- Drop Zone -->
+    <div class="drop-zone" id="drop-zone">
+      <input type="file" id="f-file" accept="image/*,video/*,audio/*,.pdf">
+      <span class="dz-icon">📁</span>
+      <div class="dz-text">اضغط لرفع عملك &nbsp;/&nbsp; Tap to upload your work</div>
+      <div class="dz-sub">Drag & drop or tap to browse</div>
+      <div class="dz-types">
+        <span class="dz-type">🖼️ صورة / Image</span>
+        <span class="dz-type">🎬 فيديو / Video</span>
+        <span class="dz-type">🎙️ صوت / Audio</span>
+        <span class="dz-type">📄 PDF</span>
+      </div>
+    </div>
+
+    <!-- Preview -->
+    <div class="preview-area" id="preview-area"></div>
+
+    <button class="submit-btn" id="submit-btn" onclick="submitWork()">
+      🚀 أرسل عملي
+      <span>Submit My Work</span>
+    </button>
+  </div>
+</div>
+
+<!-- GALLERY -->
+<div class="gallery-wrap">
+  <div class="gallery-title">
+    🏛️ الأعمال المرسلة &nbsp;<em>Submitted Works</em>
+    <span class="count-badge" id="count">0</span>
+  </div>
+  <div id="gallery"></div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<!-- CERTIFICATE MODAL -->
+<div class="cert-overlay" id="cert-overlay">
+  <div class="cert-modal">
+    <button class="cert-close" onclick="closeCert()">✕</button>
+    <div id="cert-content"></div>
+    <div class="cert-actions">
+      <button class="cert-print-btn" onclick="window.print()">🖨️ طباعة الشهادة / Print Certificate</button>
+    </div>
+  </div>
+</div>
+
+<script>
+let works = [];
+try { works = JSON.parse(localStorage.getItem('kg_works2') || '[]'); } catch(e){}
+
+// File handling
+const fileInput = document.getElementById('f-file');
+const dropZone = document.getElementById('drop-zone');
+const previewArea = document.getElementById('preview-area');
+let selectedFileData = null;
+let selectedFileType = null;
+let selectedFileName = null;
+
+fileInput.addEventListener('change', e => handleFile(e.target.files[0]));
+dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('active'); });
+dropZone.addEventListener('dragleave', () => dropZone.classList.remove('active'));
+dropZone.addEventListener('drop', e => { e.preventDefault(); dropZone.classList.remove('active'); handleFile(e.dataTransfer.files[0]); });
+
+function handleFile(file) {
+  if(!file) return;
+  selectedFileName = file.name;
+  selectedFileType = file.type;
+  const reader = new FileReader();
+  reader.onload = e => {
+    selectedFileData = e.target.result;
+    showPreview(file, e.target.result);
+  };
+  reader.readAsDataURL(file);
+}
+
+function showPreview(file, dataUrl) {
+  previewArea.style.display = 'block';
+  dropZone.style.display = 'none';
+  const size = (file.size / 1024 / 1024).toFixed(1) + ' MB';
+
+  if(file.type.startsWith('image/')) {
+    previewArea.innerHTML = `
+      <button class="preview-remove" onclick="removeFile()">✕</button>
+      <img src="${dataUrl}" style="width:100%;max-height:200px;object-fit:cover;border-radius:12px;">`;
+  } else if(file.type.startsWith('video/')) {
+    previewArea.innerHTML = `
+      <button class="preview-remove" onclick="removeFile()">✕</button>
+      <video src="${dataUrl}" controls style="width:100%;max-height:200px;border-radius:12px;"></video>`;
+  } else if(file.type.startsWith('audio/')) {
+    previewArea.innerHTML = `
+      <button class="preview-remove" onclick="removeFile()">✕</button>
+      <div class="audio-preview">
+        <div style="font-size:13px;color:rgba(180,210,255,0.7);font-weight:600;">🎙️ ${file.name}</div>
+        <audio src="${dataUrl}" controls></audio>
+      </div>`;
+  } else {
+    previewArea.innerHTML = `
+      <button class="preview-remove" onclick="removeFile()">✕</button>
+      <div class="preview-file">
+        <span class="pf-icon">📄</span>
+        <div class="pf-info">
+          <div class="pf-name">${file.name}</div>
+          <div class="pf-size">${size}</div>
+        </div>
+      </div>`;
+  }
+}
+
+function removeFile() {
+  selectedFileData = null; selectedFileType = null; selectedFileName = null;
+  previewArea.style.display = 'none'; previewArea.innerHTML = '';
+  dropZone.style.display = 'block';
+  fileInput.value = '';
+}
+
+// Submit
+function submitWork() {
+  const name = document.getElementById('f-name').value.trim();
+  const cls  = document.getElementById('f-class').value;
+  if(!name) { toast('❗ Please enter your name / أدخل اسمك'); return; }
+  if(!cls)  { toast('❗ Please select your class / اختر صفك'); return; }
+
+  const btn = document.getElementById('submit-btn');
+  btn.disabled = true;
+  btn.innerHTML = '⏳ Uploading... / جاري الرفع';
+
+  const work = {
+    id: Date.now(), name, cls,
+    fileData: selectedFileData,
+    fileType: selectedFileType,
+    fileName: selectedFileName,
+    date: new Date().toLocaleDateString('en-AE')
+  };
+
+  works.unshift(work);
+  try { localStorage.setItem('kg_works2', JSON.stringify(works)); } catch(e){}
+  render();
+
+  // Reset
+  document.getElementById('f-name').value = '';
+  document.getElementById('f-class').value = '';
+  removeFile();
+  btn.disabled = false;
+  btn.innerHTML = '🚀 أرسل عملي <span>Submit My Work</span>';
+  toast('🎉 Submitted! / تم الإرسال بنجاح!');
+
+  // Show certificate automatically
+  setTimeout(() => showCert(work), 800);
+
+  window.scrollTo({top: document.querySelector('.gallery-wrap').offsetTop - 20, behavior:'smooth'});
+}
+
+// Render gallery
+function getTypeIcon(fileType) {
+  if(!fileType) return '🎨';
+  if(fileType.startsWith('image/')) return '🖼️';
+  if(fileType.startsWith('video/')) return '🎬';
+  if(fileType.startsWith('audio/')) return '🎙️';
+  return '📄';
+}
+function getTypeLabel(fileType) {
+  if(!fileType) return 'Work';
+  if(fileType.startsWith('image/')) return 'صورة / Image';
+  if(fileType.startsWith('video/')) return 'فيديو / Video';
+  if(fileType.startsWith('audio/')) return 'صوتي / Audio';
+  return 'ملف / File';
+}
+
+function render() {
+  const g = document.getElementById('gallery');
+  document.getElementById('count').textContent = works.length + ' ' + (works.length === 1 ? 'work' : 'works');
+  if(!works.length) {
+    g.innerHTML = '<div class="empty"><span>🎨</span>No works yet — be the first! 🌟<em>لا توجد أعمال بعد — كن أول من يشارك!</em></div>';
+    return;
+  }
+  g.innerHTML = '<div class="grid">' + works.map(w => {
+    let mediaHTML = '';
+    if(w.fileData && w.fileType) {
+      if(w.fileType.startsWith('image/')) {
+        mediaHTML = `<img class="card-media" src="${w.fileData}" alt="${w.name}" loading="lazy">`;
+      } else if(w.fileType.startsWith('video/')) {
+        mediaHTML = `<video class="card-media" src="${w.fileData}" controls></video>`;
+      } else if(w.fileType.startsWith('audio/')) {
+        mediaHTML = `<div class="card-media-audio"><span>🎙️</span><audio src="${w.fileData}" controls></audio></div>`;
+      } else {
+        mediaHTML = `<div class="card-media-placeholder">📄</div>`;
+      }
+    } else {
+      mediaHTML = `<div class="card-media-placeholder">🎨</div>`;
+    }
+    return `<div class="card">
+      ${mediaHTML}
+      <div class="card-body">
+        <div class="card-name">👤 ${w.name}</div>
+        <div class="card-meta">
+          <span class="card-class">${w.cls}</span>
+          <span class="card-type">${getTypeIcon(w.fileType)} ${getTypeLabel(w.fileType)}</span>
+        </div>
+        <div class="card-date">📅 ${w.date}</div>
+        <button class="cert-btn" onclick='showCert(${JSON.stringify(w)})'>🏅 شهادة المشاركة / Certificate</button>
+      </div>
+    </div>`;
+  }).join('') + '</div>';
+}
+
+// Certificate
+function showCert(w) {
+  const today = new Date().toLocaleDateString('en-AE', {year:'numeric',month:'long',day:'numeric'});
+  document.getElementById('cert-content').innerHTML = `
+    <div class="cert-flag-top"></div>
+    <div class="cert-gold-top"></div>
+    <div class="cert-inner">
+      <span class="cert-eagle">🦅</span>
+      <div class="cert-school">روضة البشاير &nbsp;•&nbsp; AL BASHAIR KINDERGARTEN &nbsp;•&nbsp; 🇦🇪</div>
+      <div class="cert-title-ar">شهادة مشاركة</div>
+      <div class="cert-title-en">Certificate of Participation</div>
+      <div class="cert-divider"></div>
+      <div class="cert-presented">يُشهد بأن / This is to certify that</div>
+      <div class="cert-name">${w.name}</div>
+      <div class="cert-name-en">${w.name}</div>
+      <div class="cert-class-row">📚 ${w.cls}</div>
+      <div class="cert-body-text">
+        قد شارك بفخر في المبادرة الوطنية الإبداعية وأبدع عملاً يعبّر عن محبته وامتنانه لأبطال خط الدفاع الأول وفخره بدولة الإمارات العظيمة.
+        <br>
+        <em style="font-size:11px;color:#888;direction:ltr;display:block;margin-top:4px;">
+          Has proudly participated in the National Creative Initiative, expressing gratitude to the frontline heroes of the UAE.
+        </em>
+      </div>
+      <div class="cert-initiative">مبادرة أبطال خط الدفاع الأول</div>
+      <div class="cert-initiative-en">Frontline Heroes National Initiative</div>
+      <div class="cert-divider2"></div>
+      <div class="cert-footer">
+        <div class="cert-sig">
+          <div class="cert-sig-line"></div>
+          <div class="cert-sig-name">المعلمة حليمة محمد</div>
+          <div class="cert-sig-title">Ms. Halima Mohammed</div>
+        </div>
+        <div class="cert-date-box">
+          <div class="cert-date-label">DATE / التاريخ</div>
+          <div class="cert-date-val">${today}</div>
+          <div style="font-size:22px;margin-top:4px;">🇦🇪</div>
+        </div>
+        <div class="cert-sig">
+          <div class="cert-sig-line"></div>
+          <div class="cert-sig-name">المعلمة فاطمة محفوظ</div>
+          <div class="cert-sig-title">Ms. Fatima Mahfouz</div>
+        </div>
+      </div>
+    </div>
+    <div class="cert-gold-bottom"></div>
+    <div class="cert-flag-bottom"></div>`;
+  document.getElementById('cert-overlay').classList.add('show');
+}
+
+function closeCert() {
+  document.getElementById('cert-overlay').classList.remove('show');
+}
+
+function toast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.style.background = msg.startsWith('❗') ? '#8b0000' : '#00732f';
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3200);
+}
+
+render();
+</script>
+</body>
+</html>
